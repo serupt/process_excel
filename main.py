@@ -99,9 +99,9 @@ def process():
     response = send_file(output_filename, as_attachment=True)
 
     # Delete the uploaded files and output file
-    # os.remove(os.path.join('uploads', file1.filename))
-    # os.remove(os.path.join('uploads', file2.filename))
-    # os.remove(output_filename)
+    os.remove(os.path.join('uploads', file1.filename))
+    os.remove(os.path.join('uploads', file2.filename))
+    os.remove(output_filename)
 
     return response
 
