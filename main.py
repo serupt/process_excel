@@ -41,7 +41,7 @@ def process():
     
     print(wb_missing)
     
-    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", filename2))
+    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", "uploads/caregivers", datetime.now().strftime('%Y-%m-%d')+ "_" + filename2))
     ws_caregiver = wb_caregiver.worksheets[1]
     
     new_wb = Workbook()
@@ -100,8 +100,8 @@ def process():
     response = send_file(output_filename, as_attachment=True)
 
     # Delete the uploaded files and output file
-    # os.remove(os.path.join('uploads', file1.filename))
-    # os.remove(output_filename)
+    os.remove(os.path.join('uploads', file1.filename))
+    os.remove(output_filename)
 
     return response
 
