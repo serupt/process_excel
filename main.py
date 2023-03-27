@@ -41,7 +41,7 @@ def process():
     
     print(wb_missing)
     
-    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", "uploads/caregivers", datetime.now().strftime('%Y-%m-%d')+ "_" + filename2))
+    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", datetime.now().strftime('%Y-%m-%d')+ "_" + filename2))
     ws_caregiver = wb_caregiver.worksheets[1]
     
     new_wb = Workbook()
