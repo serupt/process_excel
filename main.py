@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from flask import Flask, flash, redirect, render_template, request, send_file
 from openpyxl import Workbook, load_workbook
@@ -32,7 +33,7 @@ def process():
     filename2 = secure_filename(file2.filename)
     # Save the files to disk
     file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
-    file2.save(os.path.join(app.config['UPLOAD_FOLDER'], filename2))
+    file2.save(os.path.join("uploads/caregivers", datetime.now().strftime('%Y-%m-%d')+ "_" + filename2))
 
     # Load the Excel files and process the data (replace with your own processing code)
     wb_missing = load_workbook(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
@@ -40,7 +41,7 @@ def process():
     
     print(wb_missing)
     
-    wb_caregiver = load_workbook(os.path.join(app.config['UPLOAD_FOLDER'], filename2))
+    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", filename2))
     ws_caregiver = wb_caregiver.worksheets[1]
     
     new_wb = Workbook()
@@ -99,9 +100,8 @@ def process():
     response = send_file(output_filename, as_attachment=True)
 
     # Delete the uploaded files and output file
-    os.remove(os.path.join('uploads', file1.filename))
-    os.remove(os.path.join('uploads', file2.filename))
-    os.remove(output_filename)
+    # os.remove(os.path.join('uploads', file1.filename))
+    # os.remove(output_filename)
 
     return response
 
