@@ -33,7 +33,7 @@ def process():
     filename2 = secure_filename(file2.filename)
     # Save the files to disk
     file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
-    file2.save(os.path.join("uploads/caregivers", datetime.now().strftime('%Y-%m-%d')+ "_" + filename2))
+    file2.save(os.path.join("uploads/caregivers", datetime.now().strftime('%Y-%m-%d_%H-%M-%S')+ "_" + filename2))
 
     # Load the Excel files and process the data (replace with your own processing code)
     wb_missing = load_workbook(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
@@ -41,7 +41,7 @@ def process():
     
     print(wb_missing)
     
-    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", datetime.now().strftime('%Y-%m-%d')+ "_" + filename2))
+    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", datetime.now().strftime('%Y-%m-%d_%H-%M-%S')+ "_" + filename2))
     ws_caregiver = wb_caregiver.worksheets[1]
     
     new_wb = Workbook()
