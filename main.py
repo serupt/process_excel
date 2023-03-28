@@ -10,7 +10,7 @@ ALLOWED_EXTENSIONS = {'xlsx'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SECRET_KEY'] = 'super secret key'
+app.config['SECRET_KEY'] = 'Qd5vX276MsEtH7EhiMAFyqGAk9QV2tC7'
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -32,12 +32,12 @@ def process():
     filename1 = secure_filename(file1.filename)
     filename2 = secure_filename(file2.filename)
     # Save the files to disk
-    file1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
+    file1.save(os.path.join(UPLOAD_FOLDER, filename1))
     currentTime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     file2.save(os.path.join("uploads/caregivers", currentTime + "_" + filename2))
 
     # Load the Excel files and process the data (replace with your own processing code)
-    wb_missing = load_workbook(os.path.join(app.config['UPLOAD_FOLDER'], filename1))
+    wb_missing = load_workbook(os.path.join(UPLOAD_FOLDER, filename1))
     ws_missing = wb_missing.worksheets[1]
     
     print(wb_missing)

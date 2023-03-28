@@ -1,37 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>File Upload Example</title>
-    <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 50%;
-      }
-      label {
-        margin: 10px 0;
-      }
-      input[type="file"] {
-        margin-bottom: 20px;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Excel Processing</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for ('static', filename='css/main.css')}}"
+    />
   </head>
   <body>
-    <h1>File Upload Example</h1>
-    <form method="POST" action="/process" enctype="multipart/form-data">
-      <label for="file1">File 1:</label>
+    <h2 class="warning">EXCEL FILES ONLY!!</h2>
+    <form action="/process" method="POST" enctype="multipart/form-data">
+      <label for="file1">Missing EVV Export</label>
       <input type="file" id="file1" name="file1" />
-      <label for="file2">File 2:</label>
+
+      <label for="file2">Caregiver List</label>
       <input type="file" id="file2" name="file2" />
+
       <input type="submit" value="Process" />
     </form>
   </body>

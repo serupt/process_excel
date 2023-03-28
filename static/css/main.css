@@ -1,0 +1,50 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: #25408f;
+  color: white;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+/* Style the file input buttons */
+input[type="file"] {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 2px solid #e5a92e;
+  border-radius: 5px;
+  background-color: #25408f;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Style the submit button */
+input[type="submit"] {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e5a92e;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+label {
+  padding: 10px;
+}
+
+.warning {
+  text-decoration: underline;
+}
