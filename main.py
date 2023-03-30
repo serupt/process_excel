@@ -56,7 +56,7 @@ def process():
 
     # Loop through each row of the sheet
     for row in ws_missing.iter_rows(min_row=2, values_only=True):
-        aide_code = row[8][-4::] #column I
+        aide_code = row[8][-4:] #column I
         date = row[2] # column C
         # Add the date to the dictionary for this person
         if aide_code in dates_dict:
@@ -78,9 +78,9 @@ def process():
     number_dict = {}
     
     for row in ws_caregiver.iter_rows(min_row=2, values_only=True):
-        aide_code = str(row[2])[-4::] #column C
+        aide_code = row[1][-4:] #column B
         if row[1] != "":
-            phone_number = "+1" + row[1].replace("-", "") # column B
+            phone_number = "+1" + row[2].replace("-", "") # column C
             number_dict[aide_code] = [phone_number]
        
         
@@ -94,7 +94,7 @@ def process():
     
 
     # Save the result workbook to disk
-    output_filename = 'output.xlsx'
+    output_filename = currentTime + "_output.xlsx"
     new_wb.save(output_filename)
 
     # Send the output file to the user for download
