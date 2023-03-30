@@ -83,9 +83,6 @@ def process():
             phone_number = "+1" + row[2].replace("-", "") # column C
             number_dict[aide_code] = [phone_number]
        
-        
-        # if phone_number:
-        #     number_dict[aide_code] = [phone_number]
     
     for col in new_ws.iter_cols(min_col=3, max_col=3):
         for cell in col:
@@ -101,7 +98,7 @@ def process():
     response = send_file(output_filename, as_attachment=True)
 
     # Delete the uploaded files and output file
-    os.remove(os.path.join('uploads', file1.filename))
+    os.remove(os.path.join(UPLOAD_FOLDER, file1.filename))
     os.remove(output_filename)
 
     return response
