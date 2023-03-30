@@ -30,17 +30,17 @@ def process():
     file2 = request.files['file2']
     
     # Save the files to disk
-    file1.save(os.path.join(UPLOAD_FOLDER, "missingEVV"))
+    file1.save(os.path.join(UPLOAD_FOLDER, "missingEVV.xlsx"))
     currentTime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    file2.save(os.path.join("uploads/caregivers", currentTime + "_" + "caregiver_list"))
+    file2.save(os.path.join("uploads/caregivers", currentTime + "_" + "caregiver_list.xlsx"))
 
     # Load the Excel files and process the data (replace with your own processing code)
-    wb_missing = load_workbook(os.path.join(UPLOAD_FOLDER, "missingEVV"))
+    wb_missing = load_workbook(os.path.join(UPLOAD_FOLDER, "missingEVV.xlsx"))
     ws_missing = wb_missing.worksheets[1]
     
     print(wb_missing)
     
-    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", currentTime + "_" + "caregiver_list"))
+    wb_caregiver = load_workbook(os.path.join("uploads/caregivers", currentTime + "_" + "caregiver_list.xlsx"))
     ws_caregiver = wb_caregiver.worksheets[1]
     
     new_wb = Workbook()
@@ -96,7 +96,7 @@ def process():
     response = send_file(output_filename, as_attachment=True)
 
     # Delete the uploaded files and output file
-    os.remove(os.path.join(UPLOAD_FOLDER, "missingEVV"))
+    os.remove(os.path.join(UPLOAD_FOLDER, "missingEVV.xlsx"))
     os.remove(output_filename)
 
     return response
