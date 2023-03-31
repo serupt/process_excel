@@ -78,7 +78,7 @@ def process():
     for row in ws_caregiver.iter_rows(min_row=2, values_only=True):
         aide_code = str(row[1])[-4:] #column B
         if row[1] != "":
-            phone_number = "+1" + row[2].replace("-", "") # column C
+            phone_number = "+1" + str(row[2]).replace("-", "") # column C
             number_dict[aide_code] = [phone_number]
        
     
