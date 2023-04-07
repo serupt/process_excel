@@ -1,8 +1,10 @@
 import os
-from datetime import datetime
+import re
+from datetime import time,datetime
 
 from flask import Flask, flash, redirect, render_template, request, send_file
 from openpyxl import Workbook, load_workbook
+from openpyxl.utils import column_index_from_string
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'uploads'
@@ -30,18 +32,107 @@ def process():
     file2 = request.files['file2']
     
     # Save the files to disk
-    file1.save("missingEVV.xlsx")
     currentTime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    file1.save(os.path.join("uploads/missingEVV", currentTime + "_" + "missingEVV.xlsx"))
     file2.save(os.path.join("uploads/caregivers", currentTime + "_" + "caregiver_list.xlsx"))
 
-    # Load the Excel files and process the data (replace with your own processing code)
-    wb_missing = load_workbook("missingEVV.xlsx")
-    ws_missing = wb_missing.worksheets[1]
+
+    # Define the regex pattern for the time column
+    date_pattern = re.compile(r'^(0?[1-9]|1[012])/(0?[1-9]|[12][0-9]|3[01])/\d{4}$')
+
+    # Define the regex pattern for the string column
+    aidecode_pattern = re.compile(r'^(GTH|128)-\d{4}$')
+    aidecode_four_digit_pattern = re.compile(r'^\d{4}$')
     
-    print(wb_missing)
+    #Define the regex pattern for xxx-xxx-xxxx phone number format
+    phone_number_pattern = re.compile(r'^\d{3}-\d{3}-\d{4}$')
+
+    # Define the number of rows to search
+    num_rows = 10
+
+    # Initialize variables to store the column letters
+    missingEVV_date_column = None
+    missingEVV_aidecode_column = None
+    missingEVV_worksheet_index = None
+
+    # Load the Excel files and process the data (replace with your own processing code)
+    wb_missing = load_workbook(os.path.join("uploads/missingEVV", currentTime + "_" + "missingEVV.xlsx"))
+    
+    # Loop through each worksheet in the workbook
+    for index, worksheet in enumerate(wb_missing):
+        # Loop through each column in the worksheet
+        for column in worksheet.columns:
+            # Loop through each cell in the first 'num_rows' rows of the column
+            for cell in column[:num_rows]:
+                # Check if the cell value matches the date regex pattern
+                if cell.value and date_pattern.match(str(cell.value)):
+                    # Store the column letter in the 'date_column' variable
+                    missingEVV_date_column = cell.column_letter
+                # Check if the cell value matches the string regex pattern
+                elif cell.value and (aidecode_pattern.match(str(cell.value)) or aidecode_four_digit_pattern.match(str(cell.value))):
+                    # Store the column letter in the 'missingEVV_aidecode_column' variable
+                    missingEVV_aidecode_column = cell.column_letter
+            # If both column letters have been found, exit the loops
+            if missingEVV_date_column and missingEVV_aidecode_column:
+                break
+        # If both column letters have been found, exit the loops
+        if missingEVV_date_column and missingEVV_aidecode_column:
+            missingEVV_worksheet_index = index
+            break
+
+    # Print the results
+    # if missingEVV_date_column and missingEVV_aidecode_column:
+    #     print(f"Date column found in column {missingEVV_date_column}")
+    #     print(f"String column found in column {missingEVV_aidecode_column}")
+    #     print(f"Worksheet index is {missingEVV_worksheet_index}")
+    # else:
+    #     print("Could not find both date and string columns")
+
+    ws_missing = wb_missing.worksheets[missingEVV_worksheet_index]
+    
+
+    # Initialize variables to store the column letters
+    caregiver_aidecode_column = None
+    caregiver_phone_number_column = None
+    caregiver_worksheet_index = None
     
     wb_caregiver = load_workbook(os.path.join("uploads/caregivers", currentTime + "_" + "caregiver_list.xlsx"))
-    ws_caregiver = wb_caregiver.worksheets[1]
+    
+    # Loop through each worksheet in the workbook
+    for index, worksheet in enumerate(wb_caregiver):
+        # Loop through each column in the worksheet
+        for column in worksheet.columns:
+            # Loop through each cell in the first 'num_rows' rows of the column
+            for cell in column[:num_rows]:
+                # Check if the cell value matches the date regex pattern
+                if cell.value and phone_number_pattern.match(str(cell.value)):
+                    # Store the column letter in the 'caregiver_aidecode_column' variable
+                    caregiver_phone_number_column = cell.column_letter
+                # Check if the cell value matches the string regex pattern
+                elif cell.value and (aidecode_pattern.match(str(cell.value)) or aidecode_four_digit_pattern.match(str(cell.value))):
+                    # Store the column letter in the 'missingEVV_aidecode_column' variable
+                    caregiver_aidecode_column = cell.column_letter
+            # If both column letters have been found, exit the loops
+            if caregiver_phone_number_column and caregiver_aidecode_column:
+                break
+        # If both column letters have been found, exit the loops
+        if caregiver_phone_number_column and caregiver_aidecode_column:
+            caregiver_worksheet_index = index
+            break
+        
+        
+    # Print the results
+    # if missingEVV_date_column and missingEVV_aidecode_column:
+    #     print(f"Phone number column found in column {caregiver_phone_number_column}")
+    #     print(f"Aidecode column found in column {caregiver_aidecode_column}")
+    #     print(f"Caregiver Worksheet index is {caregiver_worksheet_index}")
+    # else:
+    #     print("Could not find both date and string columns")
+    
+    ws_caregiver = wb_caregiver.worksheets[caregiver_worksheet_index]
+    
+##!@CONVERT LETTER TO INDEX FOR COLUMNS!!!
+
     
     new_wb = Workbook()
     new_ws = new_wb.active
@@ -54,8 +145,8 @@ def process():
 
     # Loop through each row of the sheet
     for row in ws_missing.iter_rows(min_row=2, values_only=True):
-        aide_code = str(row[8])[-4:] #column I
-        date = row[2] # column C
+        aide_code = str(row[column_index_from_string(missingEVV_aidecode_column)-1])[-4:] 
+        date = row[column_index_from_string(missingEVV_date_column)-1] 
         # Add the date to the dictionary for this person
         if aide_code in dates_dict:
             if date not in dates_dict[aide_code]:
@@ -76,9 +167,9 @@ def process():
     number_dict = {}
     
     for row in ws_caregiver.iter_rows(min_row=2, values_only=True):
-        aide_code = str(row[1])[-4:] #column B
+        aide_code = str(row[column_index_from_string(caregiver_aidecode_column)-1])[-4:] #column B
         if row[1] != "":
-            phone_number = "+1" + str(row[2]).replace("-", "") # column C
+            phone_number = "+1" + str(row[column_index_from_string(caregiver_phone_number_column)-1]).replace("-", "") # column C
             number_dict[aide_code] = [phone_number]
        
     
@@ -96,9 +187,8 @@ def process():
     response = send_file(output_filename, as_attachment=True)
 
     # Delete the uploaded files and output file
-    os.remove("missingEVV.xlsx")
     os.remove(output_filename)
-
+    
     return response
 
 if __name__ == '__main__':
