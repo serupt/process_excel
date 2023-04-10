@@ -181,13 +181,10 @@ def process():
 
     # Save the result workbook to disk
     output_filename = currentTime + "_output.xlsx"
-    new_wb.save(output_filename)
+    new_wb.save(os.path.join("uploads/output", output_filename))
 
     # Send the output file to the user for download
-    response = send_file(output_filename, as_attachment=True)
-
-    # Delete the uploaded files and output file
-    os.remove(output_filename)
+    response = send_file(os.path.join("uploads/output", output_filename), as_attachment=True)
     
     return response
 
