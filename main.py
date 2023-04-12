@@ -1,6 +1,8 @@
 import os
 import re
 from datetime import time,datetime
+import csv
+from io import StringIO
 
 from flask import Flask, flash, redirect, render_template, request, send_file
 from openpyxl import Workbook, load_workbook
@@ -182,9 +184,17 @@ def process():
     # Save the result workbook to disk
     output_filename = currentTime + "_output.xlsx"
     new_wb.save(os.path.join("uploads/output", output_filename))
+    
+    with open('data.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        for row in new_ws.iter_rows():
+            writer.writerow([cell.value for cell in row])
 
-    # Send the output file to the user for download
-    response = send_file(os.path.join("uploads/output", output_filename), as_attachment=True)
+    file.close()
+    
+    response =  send_file("data.csv", attachment_filename='output.csv', as_attachment=True)
+    
+    os.remove("data.csv")
     
     return response
 
