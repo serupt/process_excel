@@ -3,6 +3,7 @@ import re
 from datetime import time,datetime
 import csv
 from io import StringIO
+import traceback
 
 from flask import Flask, flash, redirect, render_template, request, send_file
 from openpyxl import Workbook, load_workbook
@@ -24,14 +25,24 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
+@app.errorhandler(500)
+def server_error(error):
+    # render the error template with the traceback
+    return render_template('error.html', error=error), 500
+
+
+
 @app.route('/process', methods=['GET','POST'])
 def process():
     
     if 'file' not in request.files:
-            print("NO FILES")
+        return "No files inputted"
     # Get the uploaded files
     file1 = request.files['file1']
     file2 = request.files['file2']
+    
+    if not allowed_file(file1.filename) or not allowed_file(file2.filename):
+        return "Invalid file type"
     
     # Save the files to disk
     currentTime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
