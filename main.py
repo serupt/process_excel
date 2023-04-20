@@ -1,14 +1,11 @@
 import os
 import re
-from datetime import time,datetime
+from datetime import datetime
 import csv
-from io import StringIO
-import traceback
 
 from flask import Flask, flash, redirect, render_template, request, send_file
 from openpyxl import Workbook, load_workbook
 from openpyxl.utils import column_index_from_string
-from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
@@ -36,13 +33,14 @@ def server_error(error):
 def process():
     
     if 'file' not in request.files:
-        return "No files inputted"
+        print("NO FILES")
     # Get the uploaded files
     file1 = request.files['file1']
     file2 = request.files['file2']
     
     if not allowed_file(file1.filename) or not allowed_file(file2.filename):
-        return "Invalid file type"
+        flash('Please make sure the attached files are correct.', 'error')
+        return redirect("/")
     
     # Save the files to disk
     currentTime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
